@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Clapperboard, Music2, ArrowRight, Flame } from 'lucide-react';
-import { useApi } from '../lib/api.js';
-import MediaCard from '../components/MediaCard.jsx';
-import SkeletonCard from '../components/SkeletonCard.jsx';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Clapperboard, Music2, ArrowRight, Flame } from "lucide-react";
+import { useApi } from "../lib/api.js";
+import MediaCard from "../components/MediaCard.jsx";
+import SkeletonCard from "../components/SkeletonCard.jsx";
 
 const heroVariants = {
   hidden: {},
@@ -12,7 +12,11 @@ const heroVariants = {
 };
 const heroItem = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 18 } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 100, damping: 18 },
+  },
 };
 
 export default function Home() {
@@ -22,12 +26,15 @@ export default function Home() {
   const [recent, setRecent] = useState(null);
 
   useEffect(() => {
-    request('/media', { params: { type: 'video', sort: 'likes', limit: 8 } })
-      .then(setFeatured).catch(() => setFeatured([]));
-    request('/media', { params: { sort: 'views', limit: 8 } })
-      .then(setTrending).catch(() => setTrending([]));
-    request('/media', { params: { limit: 8 } })
-      .then(setRecent).catch(() => setRecent([]));
+    request("/media", { params: { type: "video", sort: "likes", limit: 8 } })
+      .then(setFeatured)
+      .catch(() => setFeatured([]));
+    request("/media", { params: { sort: "views", limit: 8 } })
+      .then(setTrending)
+      .catch(() => setTrending([]));
+    request("/media", { params: { limit: 8 } })
+      .then(setRecent)
+      .catch(() => setRecent([]));
   }, []);
 
   const featuredVideo = featured?.[0];
@@ -51,12 +58,17 @@ export default function Home() {
           variants={heroItem}
           className="mt-4 font-display text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-7xl"
         >
-          <span className="grad-text drop-shadow-[0_0_30px_rgba(139,92,246,0.35)]">ACCJ</span>{' '}
+          <span className="grad-text drop-shadow-[0_0_30px_rgba(139,92,246,0.35)]">
+            ACCJ
+          </span>{" "}
           <span className="text-white">HUB</span>
         </motion.h1>
-        <motion.p variants={heroItem} className="mt-5 max-w-xl text-base text-slate-400 sm:text-lg">
-          Every sermon, every song, every moment — streamed beautifully. Watch videos, listen to
-          music, and join the conversation.
+        <motion.p
+          variants={heroItem}
+          className="mt-5 max-w-xl text-base text-slate-400 sm:text-lg"
+        >
+          Every sermon, every song, every moment — streamed beautifully. Watch
+          videos, listen to music, and join the conversation.
         </motion.p>
         <motion.div variants={heroItem} className="mt-8 flex flex-wrap gap-3">
           <Link
@@ -65,7 +77,10 @@ export default function Home() {
           >
             <Clapperboard size={18} />
             Watch videos
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            <ArrowRight
+              size={16}
+              className="transition-transform group-hover:translate-x-1"
+            />
           </Link>
           <Link
             to="/music"
@@ -94,17 +109,24 @@ export default function Home() {
         <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6">
           <SectionTitle>Featured this week</SectionTitle>
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+            {[...Array(4)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         </section>
       )}
 
       {/* TRENDING */}
       <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6">
-        <SectionTitle icon={<Flame size={18} className="text-orange-400" />}>Trending now</SectionTitle>
+        <SectionTitle icon={<Flame size={18} className="text-orange-400" />}>
+          Trending now
+        </SectionTitle>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {trending === null && [...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
-          {trending?.slice(0, 4).map((item, i) => <MediaCard key={item._id} item={item} index={i} />)}
+          {trending === null &&
+            [...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+          {trending?.slice(0, 4).map((item, i) => (
+            <MediaCard key={item._id} item={item} index={i} />
+          ))}
         </div>
       </section>
 
@@ -112,8 +134,11 @@ export default function Home() {
       <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6">
         <SectionTitle>Recently added</SectionTitle>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {recent === null && [...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
-          {recent?.slice(0, 4).map((item, i) => <MediaCard key={item._id} item={item} index={i} />)}
+          {recent === null &&
+            [...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+          {recent?.slice(0, 4).map((item, i) => (
+            <MediaCard key={item._id} item={item} index={i} />
+          ))}
         </div>
       </section>
     </div>
