@@ -43,7 +43,7 @@ export default function Home() {
       >
         <motion.p
           variants={heroItem}
-          className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-soft"
+          className="text-xs font-semibold uppercase tracking-[0.3em] text-[#d4a437]"
         >
           Apostles Church of Christ Jesus
         </motion.p>

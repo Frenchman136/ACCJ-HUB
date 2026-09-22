@@ -42,7 +42,7 @@ export default function MediaCard({ item, index = 0 }) {
             </motion.span>
           </div>
           {/* type badge */}
-          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[11px] font-semibold text-accent-soft backdrop-blur">
+          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[11px] font-semibold text-[#d4a437] backdrop-blur">
             {isMusic ? <Music2 size={11} /> : <Play size={11} />}
             {item.categoryName || item.category?.name || (isMusic ? 'Music' : 'Video')}
           </span>
