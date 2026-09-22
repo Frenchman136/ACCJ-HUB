@@ -44,12 +44,7 @@ export default function MediaCard({ item, index = 0 }) {
           </div>
 
           <div className="min-w-0 flex-1 py-1">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#d4a437]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#d4a437]">
-                <Music2 size={10} /> Music
-              </span>
-            </div>
-            <h3 className="mt-2 line-clamp-2 font-display text-[15px] font-semibold text-white transition-colors group-hover:text-accent-soft">
+            <h3 className="line-clamp-2 font-display text-[15px] font-semibold text-white transition-colors group-hover:text-accent-soft">
               {item.title}
             </h3>
             <div className="mt-2 flex items-center gap-3 text-[11px] text-slate-400">
@@ -100,16 +95,14 @@ export default function MediaCard({ item, index = 0 }) {
           <div className="absolute inset-0 grid place-items-center bg-gradient-to-t from-ink-950/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <motion.span
               initial={false}
-              className="grid h-14 w-14 place-items-center rounded-full bg-accent/90 shadow-glow backdrop-blur"
+              animate={{ scale: [1, 1.08, 1] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              className="grid h-16 w-16 place-items-center rounded-full bg-[#d4a437]/95 shadow-[0_0_30px_rgba(212,164,55,0.45)] backdrop-blur-sm"
               whileHover={{ scale: 1.12 }}
             >
-              <Play className="ml-1 text-white" size={22} fill="currentColor" />
+              <Play className="ml-1 text-white" size={26} fill="currentColor" />
             </motion.span>
           </div>
-          <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-ink-950/70 px-2.5 py-1 text-[11px] font-semibold text-[#d4a437] backdrop-blur">
-            <Play size={11} />
-            {item.categoryName || item.category?.name || "Video"}
-          </span>
         </div>
 
         <div className="space-y-2 p-4">
