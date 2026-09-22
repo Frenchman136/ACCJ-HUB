@@ -7,16 +7,16 @@
 }
 
 body {
-  @apply bg-ink-950 text-slate-200 font-body antialiased;
+  @apply bg-[#111111] text-slate-200 font-body antialiased;
   background-image:
     radial-gradient(
       60rem 40rem at 85% -10%,
-      rgba(139, 92, 246, 0.12),
+      rgba(212, 164, 55, 0.08),
       transparent 60%
     ),
     radial-gradient(
       50rem 35rem at -10% 30%,
-      rgba(56, 189, 248, 0.08),
+      rgba(255, 255, 255, 0.02),
       transparent 60%
     );
   background-attachment: fixed;
@@ -61,7 +61,7 @@ a.bg-accent,
   height: 2px;
   width: 0;
   border-radius: 9999px;
-  background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+  background: linear-gradient(90deg, #d4a437, #f59e0b);
   transition: width 0.25s ease;
 }
 .nav-link:hover::after,
@@ -75,15 +75,15 @@ a.bg-accent,
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0c0918;
+  background: #111111;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2344;
+  background: #3a3a3a;
   border-radius: 9999px;
-  border: 2px solid #0c0918;
+  border: 2px solid #111111;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3d3465;
+  background: #555555;
 }
 
 /* Input range reset (used in players) */
@@ -95,7 +95,7 @@ input[type="range"].player-range::-webkit-slider-runnable-track {
   border-radius: 9999px;
   background: linear-gradient(
     90deg,
-    #8b5cf6 var(--fill, 0%),
+    #d4a437 var(--fill, 0%),
     rgba(255, 255, 255, 0.15) var(--fill, 0%)
   );
 }
@@ -106,7 +106,7 @@ input[type="range"].player-range::-webkit-slider-thumb {
   margin-top: -4.5px;
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.9);
+  box-shadow: 0 0 10px rgba(212, 164, 55, 0.9);
   transition: transform 0.15s ease;
 }
 input[type="range"].player-range::-webkit-slider-thumb:hover {

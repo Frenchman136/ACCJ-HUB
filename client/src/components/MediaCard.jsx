@@ -96,7 +96,11 @@ export default function MediaCard({ item, index = 0 }) {
             <motion.span
               initial={false}
               animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="grid h-16 w-16 place-items-center rounded-full bg-[#d4a437]/95 shadow-[0_0_30px_rgba(212,164,55,0.45)] backdrop-blur-sm"
               whileHover={{ scale: 1.12 }}
             >
