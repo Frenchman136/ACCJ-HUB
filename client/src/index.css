@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-ink-950 text-slate-200 font-body antialiased;
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
+    radial-gradient(50rem 35rem at -10% 30%, rgba(56, 189, 248, 0.08), transparent 60%);
+  background-attachment: fixed;
+}
+
+::selection {
+  @apply bg-accent/40 text-white;
+}
+
+/* Glassmorphism card */
+.glass {
+  @apply bg-white/[0.04] backdrop-blur-xl border border-white/10;
+}
+
+/* Gradient text */
+.grad-text {
+  @apply bg-gradient-to-r from-accent-soft via-accent to-accent-blue bg-clip-text text-transparent;
+}
+
+/* Animated nav underline */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+  transition: width 0.25s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0918;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2344;
+  border-radius: 9999px;
+  border: 2px solid #0c0918;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3d3465;
+}
+
+/* Input range reset (used in players) */
+input[type='range'].player-range {
+  @apply appearance-none bg-transparent cursor-pointer;
+}
+input[type='range'].player-range::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #8b5cf6 var(--fill, 0%), rgba(255, 255, 255, 0.15) var(--fill, 0%));
+}
+input[type='range'].player-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -4.5px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.9);
+  transition: transform 0.15s ease;
+}
+input[type='range'].player-range::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+}
+
+/* Loading shimmer skeleton */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.05) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

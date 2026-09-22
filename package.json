@@ -1,0 +1,14 @@
+{
+  "name": "accj-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ACCJ HUB - media streaming hub for videos and music",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "seed:superadmin": "node server/scripts/seedSuperAdmin.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
