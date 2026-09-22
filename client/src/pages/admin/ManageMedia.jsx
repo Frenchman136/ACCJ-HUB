@@ -160,7 +160,7 @@ export default function ManageMedia() {
                     type="checkbox"
                     checked={!!editing.downloadable}
                     onChange={(e) => setEditing({ ...editing, downloadable: e.target.checked })}
-                    className="h-4 w-4 accent-[#8b5cf6]"
+                    className="h-4 w-4 accent-[#d4a437]"
                   />
                   Allow downloads
                 </label>

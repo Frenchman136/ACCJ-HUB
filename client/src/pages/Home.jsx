@@ -58,7 +58,7 @@ export default function Home() {
           variants={heroItem}
           className="mt-4 font-display text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-7xl"
         >
-          <span className="grad-text drop-shadow-[0_0_30px_rgba(139,92,246,0.35)]">
+          <span className="grad-text drop-shadow-[0_0_30px_rgba(212,164,55,0.35)]">
             ACCJ
           </span>{" "}
           <span className="text-white">HUB</span>

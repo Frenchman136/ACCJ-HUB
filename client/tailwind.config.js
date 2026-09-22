@@ -7,9 +7,9 @@ export default {
       colors: {
         ink: { 950: '#070510', 900: '#0c0918', 800: '#151128', 700: '#1f1936' },
         accent: {
-          DEFAULT: '#8b5cf6',
-          soft: '#a78bfa',
-          blue: '#38bdf8',
+          DEFAULT: '#d4a437',
+          soft: '#e9c979',
+          blue: '#b77d18',
         },
       },
       fontFamily: {
@@ -17,8 +17,8 @@ export default {
         body: ['"Inter"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        glow: '0 0 30px -5px rgba(139, 92, 246, 0.45)',
-        'glow-sm': '0 0 18px -4px rgba(139, 92, 246, 0.5)',
+        glow: '0 0 30px -5px rgba(212, 164, 55, 0.45)',
+        'glow-sm': '0 0 18px -4px rgba(212, 164, 55, 0.5)',
         card: '0 10px 40px -12px rgba(0, 0, 0, 0.6)',
       },
       animation: {
