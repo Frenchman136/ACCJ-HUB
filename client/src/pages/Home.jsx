@@ -45,7 +45,7 @@ export default function Home() {
           variants={heroItem}
           className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-soft"
         >
-          Apostoles Church of Christ Jesus
+          Apostles Church of Christ Jesus
         </motion.p>
         <motion.h1
           variants={heroItem}
