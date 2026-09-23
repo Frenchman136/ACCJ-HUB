@@ -1,26 +1,26 @@
-import { NavLink } from 'react-router-dom';
-import { Home, Clapperboard, Music2 } from 'lucide-react';
+import { NavLink } from "react-router-dom";
+import { Home, Clapperboard, Music2 } from "lucide-react";
 
 export default function MobileNav() {
   const items = [
-    { to: '/', icon: Home, label: 'Home' },
-    { to: '/videos', icon: Clapperboard, label: 'Videos' },
-    { to: '/music', icon: Music2, label: 'Music' },
+    { to: "/", icon: Home, label: "Home" },
+    { to: "/videos", icon: Clapperboard, label: "Videos" },
+    { to: "/music", icon: Music2, label: "Music" },
   ];
   return (
     <nav
       aria-label="Mobile navigation"
       className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t border-white/10 bg-[#171717]/90 py-2 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl md:hidden"
-      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+      style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
     >
       {items.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
           to={to}
-          end={to === '/'}
+          end={to === "/"}
           className={({ isActive }) =>
             `flex flex-col items-center gap-1 rounded-xl px-5 py-1.5 text-[11px] font-medium transition-colors ${
-              isActive ? 'text-white' : 'text-slate-500'
+              isActive ? "text-white" : "text-slate-500"
             }`
           }
         >
@@ -28,7 +28,9 @@ export default function MobileNav() {
             <>
               <span
                 className={`rounded-full px-4 py-0.5 transition-colors ${
-                  isActive ? 'bg-[#2a2a2a] text-accent-soft' : 'bg-transparent text-slate-500'
+                  isActive
+                    ? "bg-[#2a2a2a] text-accent-soft"
+                    : "bg-transparent text-slate-500"
                 }`}
               >
                 <Icon size={20} />
