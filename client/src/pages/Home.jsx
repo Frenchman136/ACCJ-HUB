@@ -159,7 +159,10 @@ export default function Home() {
           Every sermon, every song, every moment — streamed beautifully. Watch
           videos, listen to music, and join the conversation.
         </motion.p>
-        <motion.div variants={heroItem} className="mt-8 flex flex-wrap gap-3">
+        <motion.div
+          variants={heroItem}
+          className="mt-8 hidden flex-wrap gap-3 md:flex"
+        >
           <Link
             to="/videos"
             className="group flex items-center gap-2 rounded-2xl bg-gradient-to-r from-accent to-accent-blue px-6 py-3.5 font-semibold text-white shadow-glow transition-transform hover:scale-[1.03]"
