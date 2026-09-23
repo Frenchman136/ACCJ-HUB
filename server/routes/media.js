@@ -29,6 +29,53 @@ const SORTS = {
   views: { views: -1 },
 };
 
+async function fetchDemoFallbackVideos(limit = 8) {
+  const urls = [
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "https://media.w3.org/2010/05/sintel/trailer.mp4",
+    "https://www.w3schools.com/html/mov_bbb.mp4",
+    "https://www.w3schools.com/html/movie.mp4",
+    "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "https://media.w3.org/2010/05/sintel/trailer.mp4",
+    "https://www.w3schools.com/html/mov_bbb.mp4",
+    "https://www.w3schools.com/html/movie.mp4",
+  ];
+
+  return urls.slice(0, limit).map((url, index) => ({
+    _id: `demo-video-${index + 1}`,
+    type: "video",
+    title: `Demo Video ${index + 1}`,
+    description:
+      "Fallback sample video for local development before real uploads.",
+    url,
+    publicId: `demo-video-${index + 1}`,
+    thumbnailUrl:
+      [
+        "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4",
+        "https://images.unsplash.com/photo-1516280440614-37939bbacd81",
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+        "https://images.unsplash.com/photo-1493246507139-91e8fad9978e",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
+        "https://images.unsplash.com/photo-1516321497487-e288fb19713f",
+        "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3",
+      ][index] ||
+      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4",
+    thumbnailPublicId: `demo-video-thumb-${index + 1}`,
+    category: null,
+    uploadedBy: "demo-local",
+    likes: [],
+    views: 0,
+    duration: 45 + index,
+    downloadable: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    likesCount: 0,
+    commentsCount: 0,
+    myLike: false,
+  }));
+}
+
 async function fetchDeezerFallbackMusic(limit = 8) {
   const searches = [
     "gospel worship",
@@ -104,9 +151,14 @@ router.get(
     } = req.query;
     const totalCount = await Media.countDocuments();
 
-    if (totalCount === 0 && (!type || type === "music")) {
-      const fallback = await fetchDeezerFallbackMusic(Number(limit) || 8);
-      return res.json(fallback);
+    if (totalCount === 0) {
+      if (type === "video") {
+        return res.json(await fetchDemoFallbackVideos(Number(limit) || 8));
+      }
+      if (!type || type === "music") {
+        const fallback = await fetchDeezerFallbackMusic(Number(limit) || 8);
+        return res.json(fallback);
+      }
     }
 
     const match = {};

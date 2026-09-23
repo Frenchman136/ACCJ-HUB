@@ -4,16 +4,16 @@ import Media from "../models/Media.js";
 import Category from "../models/Category.js";
 
 const VIDEO_URLS = [
-  "/demo/video-demo-1.mp4",
-  "/demo/video-demo-2.mp4",
-  "/demo/video-demo-1.mp4",
-  "/demo/video-demo-2.mp4",
-  "/demo/video-demo-1.mp4",
-  "/demo/video-demo-2.mp4",
-  "/demo/video-demo-1.mp4",
-  "/demo/video-demo-2.mp4",
-  "/demo/video-demo-1.mp4",
-  "/demo/video-demo-2.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
 ];
 
 const uploadedBy = process.env.SUPER_ADMIN_USER_ID || "local-test-user";
