@@ -12,6 +12,7 @@ import Home from "./pages/Home.jsx";
 import Videos from "./pages/Videos.jsx";
 import Music from "./pages/Music.jsx";
 import MediaDetail from "./pages/MediaDetail.jsx";
+import CollectionDetail from "./pages/CollectionDetail.jsx";
 import Profile from "./pages/Profile.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import UploadMedia from "./pages/admin/UploadMedia.jsx";
@@ -28,7 +29,7 @@ function SetupHint() {
     <div className="grid min-h-screen place-items-center p-6 text-center">
       <div>
         <h1 className="font-display text-2xl font-bold grad-text">
-          ACCJ HUB needs configuration
+          Sound Groove needs configuration
         </h1>
         <p className="mt-3 max-w-md text-sm text-slate-400">
           Create{" "}
@@ -63,8 +64,12 @@ function AnimatedRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/videos/:id" element={<MediaDetail />} />
+          <Route path="/videos/artist/:slug" element={<CollectionDetail />} />
+          <Route path="/videos/album/:slug" element={<CollectionDetail />} />
           <Route path="/music" element={<Music />} />
           <Route path="/music/:id" element={<MediaDetail />} />
+          <Route path="/music/artist/:slug" element={<CollectionDetail />} />
+          <Route path="/music/album/:slug" element={<CollectionDetail />} />
           <Route
             path="/profile"
             element={

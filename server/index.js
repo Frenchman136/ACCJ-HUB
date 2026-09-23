@@ -11,8 +11,7 @@ import { notFound, errorHandler } from "./middleware/error.js";
 
 const app = express();
 const allowedOrigins = (
-  process.env.CLIENT_URL ||
-  "https://accj-hub.vercel.app,http://localhost:5173"
+  process.env.CLIENT_URL || "https://accj-hub.vercel.app,http://localhost:5173"
 )
   .split(",")
   .map((url) => url.trim())
@@ -65,7 +64,7 @@ app.use(express.json({ limit: "2mb" }));
 app.use(clerkMiddleware()); // attaches req.auth
 
 app.get("/api/health", (req, res) =>
-  res.json({ ok: true, service: "accj-hub" }),
+  res.json({ ok: true, service: "sound-groove" }),
 );
 
 app.use("/api/media", mediaRoutes);
@@ -78,5 +77,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`ACCJ HUB API running on port ${PORT}`));
+  app.listen(PORT, () =>
+    console.log(`Sound Groove API running on port ${PORT}`),
+  );
 });

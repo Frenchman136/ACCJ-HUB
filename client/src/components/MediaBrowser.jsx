@@ -1,55 +1,163 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Search, SlidersHorizontal } from 'lucide-react';
-import { useApi } from '../lib/api.js';
-import MediaCard from './MediaCard.jsx';
-import CategoryPills from './CategoryPills.jsx';
-import SkeletonCard from './SkeletonCard.jsx';
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Search,
+  SlidersHorizontal,
+  Play,
+  SkipBack,
+  SkipForward,
+  Music2,
+  Disc3,
+} from "lucide-react";
+import { useApi } from "../lib/api.js";
+import { usePlayer } from "../context/PlayerContext.jsx";
+import { formatDuration } from "../lib/utils.js";
+import MediaCard from "./MediaCard.jsx";
+import CategoryPills from "./CategoryPills.jsx";
+import SkeletonCard from "./SkeletonCard.jsx";
 
 const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'likes', label: 'Most liked' },
-  { value: 'comments', label: 'Most commented' },
-  { value: 'views', label: 'Most viewed' },
+  { value: "newest", label: "Newest" },
+  { value: "likes", label: "Most liked" },
+  { value: "comments", label: "Most commented" },
+  { value: "views", label: "Most viewed" },
 ];
 
 /** Shared, filterable media grid used by both Videos and Music pages. */
 export default function MediaBrowser({ type }) {
   const { request } = useApi();
+  const navigate = useNavigate();
+  const { playQueue } = usePlayer();
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState(null);
-  const [search, setSearch] = useState(searchParams.get('q') || '');
-  const [sort, setSort] = useState('newest');
-  const activeCat = searchParams.get('cat') || '';
+  const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [sort, setSort] = useState("newest");
+  const [albumIndex, setAlbumIndex] = useState(0);
+  const [artistIndex, setArtistIndex] = useState(0);
+  const [view, setView] = useState("albums");
+  const activeCat = searchParams.get("cat") || "";
 
   useEffect(() => {
-    request(`/categories?type=${type}`).then(setCategories).catch(() => {});
+    request(`/categories?type=${type}`)
+      .then(setCategories)
+      .catch(() => {});
   }, [type]);
 
   useEffect(() => {
-    const t = setTimeout(async () => {
-      try {
-        const data = await request('/media', {
-          params: { type, category: activeCat || undefined, search: search || undefined, sort },
-        });
-        setItems(data);
-      } catch {
-        setItems([]);
-      }
-    }, search ? 350 : 0);
+    const t = setTimeout(
+      async () => {
+        try {
+          const data = await request("/media", {
+            params: {
+              type,
+              category: activeCat || undefined,
+              search: search || undefined,
+              sort,
+            },
+          });
+          setItems(data);
+        } catch {
+          setItems([]);
+        }
+      },
+      search ? 350 : 0,
+    );
     return () => clearTimeout(t);
   }, [type, activeCat, search, sort]);
+
+  useEffect(() => {
+    setAlbumIndex(0);
+    setArtistIndex(0);
+    setView("albums");
+  }, [type, activeCat, search]);
 
   const setCat = (cat) =>
     setSearchParams((p) => {
       const next = new URLSearchParams(p);
-      cat ? next.set('cat', cat) : next.delete('cat');
+      cat ? next.set("cat", cat) : next.delete("cat");
       return next;
     });
 
-  const title = type === 'music' ? 'Music' : 'Videos';
+  const musicAlbums = useMemo(() => {
+    if (!items?.length) return [];
+    const byAlbum = new Map();
+    for (const item of items) {
+      const album = (
+        item.album ||
+        item.categoryName ||
+        "Featured Album"
+      ).trim();
+      const artist = (
+        item.artist ||
+        item.categoryName ||
+        "Featured Artist"
+      ).trim();
+      if (!byAlbum.has(album)) {
+        byAlbum.set(album, {
+          name: album,
+          cover: item.thumbnailUrl || "",
+          songs: [],
+          artist,
+        });
+      }
+      byAlbum.get(album).songs.push({
+        ...item,
+        categoryName:
+          item.categoryName || (type === "music" ? "Deezer" : "Video"),
+        thumbnailUrl: item.thumbnailUrl || item.artistAvatar || "",
+      });
+    }
+    return [...byAlbum.values()];
+  }, [type, items]);
+
+  const musicArtists = useMemo(() => {
+    if (!items?.length) return [];
+    const byArtist = new Map();
+    for (const item of items) {
+      const artist = (
+        item.artist ||
+        item.categoryName ||
+        "Featured Artist"
+      ).trim();
+      const album = (
+        item.album ||
+        item.categoryName ||
+        "Featured Album"
+      ).trim();
+      if (!byArtist.has(artist)) {
+        byArtist.set(artist, {
+          name: artist,
+          avatar: item.artistAvatar || item.thumbnailUrl || "",
+          songs: [],
+          album,
+        });
+      }
+      byArtist.get(artist).songs.push({
+        ...item,
+        categoryName:
+          item.categoryName || (type === "music" ? "Deezer" : "Video"),
+        thumbnailUrl: item.thumbnailUrl || item.artistAvatar || "",
+      });
+    }
+    return [...byArtist.values()];
+  }, [type, items]);
+
+  const slugify = (value = "") =>
+    String(value)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  const openCollection = (kind, name) => {
+    const base = `/${type}`;
+    const slug = slugify(name);
+    navigate(`${base}/${kind}/${slug}`);
+  };
+
+  const title = type === "music" ? "Music" : "Videos";
   const heading = useMemo(() => title, [title]);
 
   return (
@@ -67,61 +175,101 @@ export default function MediaBrowser({ type }) {
         transition={{ delay: 0.1 }}
         className="mt-2 text-sm text-slate-400"
       >
-        {type === 'music'
-          ? 'Worship, choir, and gospel mixes — press play and keep browsing.'
-          : 'Services, events, and moments — stream them all in one place.'}
+        {type === "music"
+          ? "Browse curated Deezer-inspired albums and artists, then open a playlist and keep the music moving."
+          : "Services, events, and moments — stream them all in one place."}
       </motion.p>
 
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        className="mt-6 flex flex-col gap-4"
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:max-w-xs">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Search ${title.toLowerCase()}...`}
-              aria-label="Search"
-              className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-500 outline-none transition-all focus:border-accent/60 focus:shadow-glow-sm"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal size={15} className="text-slate-500" />
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              aria-label="Sort by"
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-200 outline-none transition-colors focus:border-accent/60 [&>option]:bg-ink-800"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
+      {items && (
+        <>
+          <div className="mt-8">
+            <div className="mb-4 flex items-center gap-3">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-[#d4a437]">
+                Browse
+              </p>
+              <h2 className="font-display text-2xl font-bold text-white">
+                Albums
+              </h2>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {musicAlbums.map((album, index) => (
+                <button
+                  key={`${album.name}-${index}`}
+                  onClick={() => openCollection("album", album.name)}
+                  className="group min-w-[220px] flex-shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] text-left transition-all hover:border-accent/40 hover:bg-white/[0.05]"
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={album.cover}
+                      alt={album.name}
+                      className="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-3 text-white">
+                      <span className="rounded-full bg-black/40 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#f5d98d]">
+                        Album
+                      </span>
+                      <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] backdrop-blur-sm">
+                        {album.songs.length} tracks
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="line-clamp-2 text-base font-semibold text-white">
+                      {album.name}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-400">
+                      {album.artist}
+                    </p>
+                  </div>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
+
+          <div className="mt-8">
+            <div className="mb-4 flex items-center gap-3">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-[#d4a437]">
+                Featured
+              </p>
+              <h2 className="font-display text-2xl font-bold text-white">
+                Artists
+              </h2>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {musicArtists.map((artist, index) => (
+                <button
+                  key={`${artist.name}-${index}`}
+                  onClick={() => openCollection("artist", artist.name)}
+                  className="group min-w-[180px] flex-shrink-0 flex flex-col items-center rounded-3xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-accent/40 hover:bg-accent/[0.04]"
+                >
+                  <img
+                    src={artist.avatar}
+                    alt={artist.name}
+                    className="h-24 w-24 rounded-full border border-white/10 object-cover shadow-glow-sm"
+                  />
+                  <p className="mt-3 text-center text-sm font-semibold text-white">
+                    {artist.name}
+                  </p>
+                  <p className="mt-1 text-center text-xs text-slate-400">
+                    {artist.songs.length} tracks
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {!items && (
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
-
-        <CategoryPills categories={categories} active={activeCat} onChange={setCat} />
-      </motion.div>
-
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {items === null &&
-          [...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
-        {items?.length === 0 && (
-          <div className="col-span-full py-20 text-center text-slate-500">
-            <p className="text-lg font-medium">Nothing here yet</p>
-            <p className="mt-1 text-sm">Try a different search or category.</p>
-          </div>
-        )}
-        <AnimatePresence mode="popLayout">
-          {items?.map((item, i) => <MediaCard key={item._id} item={item} index={i} />)}
-        </AnimatePresence>
-      </div>
+      )}
     </div>
   );
 }

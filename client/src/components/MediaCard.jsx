@@ -23,7 +23,7 @@ export default function MediaCard({ item, index = 0 }) {
       >
         <Link
           to={`/music/${item._id}`}
-          className="group flex items-center gap-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-2 shadow-card backdrop-blur-xl transition-colors hover:border-accent/40"
+          className="group flex items-center gap-3 overflow-hidden p-2 transition-colors hover:bg-white/[0.02]"
         >
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-ink-800">
             {!loaded && <div className="skeleton absolute inset-0" />}
@@ -79,7 +79,7 @@ export default function MediaCard({ item, index = 0 }) {
     >
       <Link
         to={`/videos/${item._id}`}
-        className="group block overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-card backdrop-blur-xl transition-colors hover:border-accent/40"
+        className="group block overflow-hidden transition-colors hover:bg-white/[0.02]"
       >
         <div className="relative aspect-video overflow-hidden bg-ink-800">
           {!loaded && <div className="skeleton absolute inset-0" />}

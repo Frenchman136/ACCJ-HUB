@@ -10,7 +10,7 @@ export default function MobileNav() {
   return (
     <nav
       aria-label="Mobile navigation"
-      className="glass fixed bottom-0 left-0 right-0 z-50 flex justify-around border-x-0 border-b-0 py-2 md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 flex justify-around border-t border-white/10 bg-[#171717]/90 py-2 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl md:hidden"
       style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
     >
       {items.map(({ to, icon: Icon, label }) => (
@@ -28,7 +28,7 @@ export default function MobileNav() {
             <>
               <span
                 className={`rounded-full px-4 py-0.5 transition-colors ${
-                  isActive ? 'bg-accent/20 text-accent-soft' : ''
+                  isActive ? 'bg-[#2a2a2a] text-accent-soft' : 'bg-transparent text-slate-500'
                 }`}
               >
                 <Icon size={20} />
