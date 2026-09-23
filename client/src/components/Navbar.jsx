@@ -35,10 +35,23 @@ export default function Navbar() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-blue shadow-glow-sm transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105">
             <Radio size={18} className="text-white" />
           </span>
-          <span className="font-display text-lg font-bold tracking-tight">
+
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: "auto" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="hidden overflow-hidden font-display text-[0.85rem] font-bold tracking-tight md:inline-block"
+          >
             <span className="grad-text">Sound</span>{" "}
             <span className="text-white">Groove</span>
-          </span>
+          </motion.span>
+
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="hidden md:hidden"
+          />
         </Link>
 
         <div className="hidden items-center gap-7 md:flex">

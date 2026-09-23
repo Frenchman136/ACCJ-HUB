@@ -145,7 +145,7 @@ export default function Home() {
         </motion.p>
         <motion.h1
           variants={heroItem}
-          className="mt-4 font-display text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-7xl"
+          className="mt-4 font-display text-[2.5rem] font-extrabold leading-[1.05] tracking-tight sm:text-7xl"
         >
           <span className="grad-text drop-shadow-[0_0_30px_rgba(212,164,55,0.35)]">
             Sound
