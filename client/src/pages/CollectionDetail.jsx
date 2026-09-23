@@ -133,6 +133,25 @@ export default function CollectionDetail() {
 
   const heroImage = isArtist ? data.avatar : data.cover;
   const subtitle = isArtist ? `${songs.length} tracks` : data.artist;
+  const isVideo = type === "videos";
+
+  const handlePlayAll = () => {
+    if (isVideo) {
+      const first = songs[0];
+      if (first) navigate(`/videos/${first._id}`);
+      return;
+    }
+    playQueue(songs, 0);
+  };
+
+  const handlePlayTrack = (index) => {
+    if (isVideo) {
+      const target = songs[index];
+      if (target) navigate(`/videos/${target._id}`);
+      return;
+    }
+    playQueue(songs, index);
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-32 pt-8 sm:px-6 md:pb-20">
@@ -166,11 +185,11 @@ export default function CollectionDetail() {
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <button
-              onClick={() => playQueue(songs, 0)}
+              onClick={handlePlayAll}
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#d4a437] to-[#f59e0b] px-5 py-2.5 text-sm font-semibold text-[#120f0a] shadow-[0_0_30px_rgba(212,164,55,0.25)] transition hover:brightness-110"
             >
               <Play size={16} fill="currentColor" />
-              Play all
+              {isVideo ? "Open first video" : "Play all"}
             </button>
 
             <Link
@@ -198,7 +217,7 @@ export default function CollectionDetail() {
           {songs.map((song, index) => (
             <button
               key={`${song._id || song.url}-${index}`}
-              onClick={() => playQueue(songs, index)}
+              onClick={() => handlePlayTrack(index)}
               className="flex w-full items-center gap-3 px-1 py-2.5 text-left transition hover:bg-white/[0.01]"
             >
               <div className="w-5 text-sm font-medium text-slate-400">

@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { useRef } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ToastProvider } from "./context/ToastContext.jsx";
@@ -51,6 +52,50 @@ function SetupHint() {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  const handleTouchStart = (event) => {
+    const touch = event.changedTouches?.[0];
+    if (!touch) return;
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+  };
+
+  const handleTouchEnd = (event) => {
+    const touch = event.changedTouches?.[0];
+    if (touchStartX.current == null || touchStartY.current == null || !touch)
+      return;
+
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+
+    if (Math.abs(deltaX) < 60 || Math.abs(deltaY) > Math.abs(deltaX)) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+      return;
+    }
+
+    const current = location.pathname.startsWith("/videos")
+      ? "/videos"
+      : location.pathname.startsWith("/music")
+        ? "/music"
+        : "/";
+
+    const sectionOrder = ["/", "/videos", "/music"];
+    const index = sectionOrder.indexOf(current);
+    const nextIndex = deltaX < 0 ? index + 1 : index - 1;
+    const target = sectionOrder[nextIndex];
+
+    if (target && index !== -1) {
+      navigate(target);
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.main
@@ -59,6 +104,8 @@ function AnimatedRoutes() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.25 }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         <Routes location={location}>
           <Route path="/" element={<Home />} />

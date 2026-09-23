@@ -151,8 +151,10 @@ export default function MediaBrowser({ type }) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
+  const sectionPath = type === "music" ? "music" : "videos";
+
   const openCollection = (kind, name) => {
-    const base = `/${type}`;
+    const base = `/${sectionPath}`;
     const slug = slugify(name);
     navigate(`${base}/${kind}/${slug}`);
   };
