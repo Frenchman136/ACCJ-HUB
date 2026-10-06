@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDown,
   ArrowLeft,
-  Bell,
   Bookmark,
   Check,
   ChevronDown,
@@ -22,7 +21,7 @@ import {
   Play,
   Plus,
   Radio,
-  Settings,
+  Search,
   Share2,
   Shuffle,
   SkipBack,
@@ -30,7 +29,6 @@ import {
   Sparkles,
   ThumbsDown,
   ThumbsUp,
-  Upload,
   UserRound,
   Volume2,
   X,
@@ -331,6 +329,8 @@ export default function MusicShell() {
   const [effectsOn, setEffectsOn] = useState(false);
   const [lyricsOpen, setLyricsOpen] = useState(false);
   const [seekDragging, setSeekDragging] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!location.state?.openPlayer) return;
@@ -469,6 +469,13 @@ export default function MusicShell() {
   const seekFromDrag = (event) => {
     if (seekDragging) seekFromPointer(event);
   };
+  const searchResults = searchQuery.trim()
+    ? normalizedTracks.filter((track) =>
+        `${track.title} ${track.artist} ${track.album}`
+          .toLowerCase()
+          .includes(searchQuery.trim().toLowerCase()),
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-[#090909] text-white selection:bg-green-500/30">
@@ -483,34 +490,59 @@ export default function MusicShell() {
             Sound <span className="text-green-400">Groove</span>
           </span>
         </Link>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
+          {searchOpen && (
+            <input
+              autoFocus
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  setSearchOpen(false);
+                  setSearchQuery("");
+                }
+              }}
+              placeholder="Search music"
+              aria-label="Search music"
+              className="w-[min(52vw,16rem)] rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 focus:border-green-400/50"
+            />
+          )}
           <button
             type="button"
-            className="rounded-full border border-green-400/30 bg-green-400/10 px-3 py-2 text-[10px] font-bold text-green-300 transition hover:bg-green-500 hover:text-[#111]"
+            aria-label={searchOpen ? "Close search" : "Search music"}
+            onClick={() => {
+              setSearchOpen((open) => !open);
+              if (searchOpen) setSearchQuery("");
+            }}
+            className="grid h-10 w-10 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white"
           >
-            Get premium +
+            {searchOpen ? <X size={18} /> : <Search size={18} />}
           </button>
-          <button
-            type="button"
-            aria-label="Upload"
-            className="grid h-9 w-9 place-items-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
-          >
-            <Upload size={17} />
-          </button>
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="grid h-9 w-9 place-items-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
-          >
-            <Bell size={17} />
-          </button>
-          <button
-            type="button"
-            aria-label="Settings"
-            className="grid h-9 w-9 place-items-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
-          >
-            <Settings size={17} />
-          </button>
+          {searchOpen && searchQuery.trim() && (
+            <div className="absolute right-4 top-[calc(100%-2px)] z-[60] max-h-[min(60vh,24rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-white/10 bg-[#121212]/98 p-2 shadow-2xl backdrop-blur-xl sm:right-6">
+              {searchResults.length ? searchResults.map((track, index) => (
+                <button
+                  key={track._id}
+                  type="button"
+                  onClick={() => {
+                    playTrack(track, index);
+                    setSearchOpen(false);
+                    setSearchQuery("");
+                  }}
+                  className="flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-white/[0.06]"
+                >
+                  <img src={track.thumbnailUrl} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-bold text-white">{track.title}</span>
+                    <span className="block truncate text-xs text-white/45">{track.artist} · {track.album}</span>
+                  </span>
+                  <Play size={15} className="text-green-400" />
+                </button>
+              )) : (
+                <p className="px-3 py-4 text-sm text-white/45">No matching tracks</p>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -802,34 +834,6 @@ export default function MusicShell() {
           </div>
         </section>
 
-        <section className="px-4 pb-8 sm:px-6">
-          <SectionHeader
-            title="Premium tracks"
-            action={
-              <button
-                type="button"
-                className="rounded-full bg-green-500 px-3 py-1.5 text-[10px] font-black text-[#111]"
-              >
-                Get premium +
-              </button>
-            }
-          />
-          <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
-            {listRows.map((item, index) => (
-              <div
-                key={`${item.title}-premium`}
-                className="w-[78%] min-w-[78%] snap-start rounded-[1.4rem] border border-white/10 bg-[#111] p-3 sm:w-[48%] sm:min-w-[48%]"
-              >
-                <SongRow
-                  item={{ ...item, thumbnailUrl: item.thumbnail }}
-                  index={index}
-                  onPlay={playTrack}
-                  compact
-                />
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
 
       <AnimatePresence>
