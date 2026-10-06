@@ -187,7 +187,8 @@ async function fetchDeezerFallbackMusic(limit = 8) {
       _id: `demo-music-${index + 1}`,
       type: "music",
       title: `Demo Track ${index + 1}`,
-      description: "Fallback sample song for local development before real uploads.",
+      description:
+        "Fallback sample song for local development before real uploads.",
       url,
       publicId: `demo-music-${index + 1}`,
       thumbnailUrl: demoMusicThumbs[index] || demoMusicThumbs[0],
@@ -301,7 +302,9 @@ router.get(
       const demoMedia = [
         ...(await fetchDemoFallbackVideos(8)),
         ...(await fetchDeezerFallbackMusic(8)),
-      ].find((item) => item._id === req.params.id || item.url === req.params.id);
+      ].find(
+        (item) => item._id === req.params.id || item.url === req.params.id,
+      );
 
       if (!demoMedia) return res.status(404).json({ error: "Media not found" });
       return res.json({ ...demoMedia, myLike: false });
@@ -311,7 +314,9 @@ router.get(
       const fallback = [
         ...(await fetchDemoFallbackVideos(8)),
         ...(await fetchDeezerFallbackMusic(8)),
-      ].find((item) => item._id === req.params.id || item.url === req.params.id);
+      ].find(
+        (item) => item._id === req.params.id || item.url === req.params.id,
+      );
       if (!fallback) {
         return res.status(404).json({ error: "Media not found" });
       }
