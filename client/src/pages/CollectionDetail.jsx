@@ -202,7 +202,17 @@ export default function CollectionDetail() {
       if (target) navigate(`/videos/${target._id}`);
       return;
     }
-    playQueue(songs, index);
+    const playableSongs = songs.map((song, songIndex) => ({
+      ...song,
+      _id: song._id || `collection-${slug}-${songIndex}`,
+      thumbnailUrl: song.thumbnailUrl || song.artistAvatar || heroImage,
+      url: song.url || "/demo/music-demo-1.mp3",
+      categoryName: song.categoryName || "Music",
+    }));
+    playQueue(playableSongs, index);
+    navigate("/music", {
+      state: { openPlayer: true, queue: playableSongs, index },
+    });
   };
 
   return (

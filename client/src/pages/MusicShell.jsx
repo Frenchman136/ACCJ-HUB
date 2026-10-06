@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDown,
@@ -320,6 +320,7 @@ function TinyAvatar({ src, name, ring = false, greenRing = false }) {
 }
 
 export default function MusicShell() {
+  const location = useLocation();
   const navigate = useNavigate();
   const player = usePlayer();
   const [activeCard, setActiveCard] = useState(0);
@@ -330,6 +331,15 @@ export default function MusicShell() {
   const [effectsOn, setEffectsOn] = useState(false);
   const [lyricsOpen, setLyricsOpen] = useState(false);
   const [seekDragging, setSeekDragging] = useState(false);
+
+  useEffect(() => {
+    if (!location.state?.openPlayer) return;
+    if (Array.isArray(location.state.queue) && location.state.queue.length) {
+      player.playQueue(location.state.queue, location.state.index || 0);
+    }
+    setFullPlayer(true);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate, player.playQueue]);
 
   const normalizedTracks = useMemo(
     () =>
@@ -411,6 +421,18 @@ export default function MusicShell() {
         },
       },
     });
+  };
+
+  const playAlbumInShell = (album) => {
+    const albumTrackIndex = normalizedTracks.findIndex(
+      (track) => track.album === album.album,
+    );
+    const artistTrackIndex = normalizedTracks.findIndex(
+      (track) => track.artist === album.artist,
+    );
+    const trackIndex =
+      albumTrackIndex >= 0 ? albumTrackIndex : artistTrackIndex;
+    if (trackIndex >= 0) playTrack(normalizedTracks[trackIndex], trackIndex);
   };
 
   const openFullPlayer = () => {
@@ -1464,4 +1486,3 @@ export default function MusicShell() {
     </div>
   );
 }
-
