@@ -1,9 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Disc3, Music2, Play } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Download,
+  Heart,
+  LockKeyhole,
+  MoreHorizontal,
+  Music2,
+  Play,
+  Send,
+  Shuffle,
+} from "lucide-react";
 import { useApi } from "../lib/api.js";
 import { usePlayer } from "../context/PlayerContext.jsx";
-import { formatDuration } from "../lib/utils.js";
 
 const slugify = (value = "") =>
   String(value)
@@ -65,18 +74,39 @@ const buildAlbumGroups = (items = []) => {
 
 export default function CollectionDetail() {
   const { slug } = useParams();
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname, state } = location;
   const navigate = useNavigate();
   const { request } = useApi();
   const { playQueue } = usePlayer();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState({});
+  const [scrolled, setScrolled] = useState(false);
+  const [visibleSongCount, setVisibleSongCount] = useState(30);
+  const loadMoreRef = useRef(null);
 
   const isArtist = pathname.includes("/artist/");
+  const isPlaylist = pathname.includes("/playlist/");
   const type = pathname.startsWith("/videos/") ? "videos" : "music";
 
   useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 220);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
     let active = true;
+
+    if (state?.collection) {
+      setData(state.collection);
+      setLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     request("/media", {
       params: { type: type === "music" ? "music" : "video", limit: 200 },
@@ -99,9 +129,24 @@ export default function CollectionDetail() {
     return () => {
       active = false;
     };
-  }, [slug, isArtist, type]);
+  }, [slug, isArtist, type, state, request]);
 
   const songs = useMemo(() => data?.songs || [], [data]);
+
+  useEffect(() => {
+    setVisibleSongCount(30);
+  }, [data]);
+
+  useEffect(() => {
+    if (visibleSongCount >= songs.length || !loadMoreRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisibleSongCount((count) => Math.min(songs.length, count + 30));
+      }
+    });
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [songs.length, visibleSongCount]);
 
   if (loading) {
     return (
@@ -132,7 +177,8 @@ export default function CollectionDetail() {
   }
 
   const heroImage = isArtist ? data.avatar : data.cover;
-  const subtitle = isArtist ? `${songs.length} tracks` : data.artist;
+  const subtitle =
+    data.description || (isArtist ? `${songs.length} tracks` : data.artist);
   const isVideo = type === "videos";
 
   const handlePlayAll = () => {
@@ -142,6 +188,12 @@ export default function CollectionDetail() {
       return;
     }
     playQueue(songs, 0);
+  };
+
+  const handleShuffle = () => {
+    if (isVideo) return handlePlayAll();
+    const shuffled = [...songs].sort(() => Math.random() - 0.5);
+    playQueue(shuffled, 0);
   };
 
   const handlePlayTrack = (index) => {
@@ -154,119 +206,171 @@ export default function CollectionDetail() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-32 pt-8 sm:px-6 md:pb-20">
-      <div className="mt-1 flex flex-col gap-5 md:flex-row md:items-center md:gap-7">
-        <div className="-mx-4 overflow-hidden border border-white/10 bg-black/20 shadow-[0_20px_45px_rgba(0,0,0,0.35)] md:mx-0 md:max-w-[280px]">
+    <div className="relative min-h-screen overflow-hidden bg-[#080808] pb-36 text-white">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[460px] bg-gradient-to-b from-[#45403c] via-[#191716]/75 to-transparent"
+        style={{
+          backgroundImage: `linear-gradient(180deg, ${data.tint || "rgba(92, 74, 59, .64)"}, rgba(18, 16, 15, .78) 62%, transparent)`,
+        }}
+      />
+      <header
+        className={`fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between px-4 transition-colors ${scrolled ? "border-b border-white/5 bg-[#101010]/95 backdrop-blur-xl" : "bg-transparent"}`}
+      >
+        <button
+          type="button"
+          aria-label="Go back"
+          onClick={() => navigate(-1)}
+          className="grid h-10 w-10 place-items-center text-white"
+        >
+          <ArrowLeft size={21} />
+        </button>
+        <p
+          className={`max-w-[65vw] truncate text-sm font-bold text-white transition-opacity ${scrolled ? "opacity-100" : "opacity-0"}`}
+        >
+          {data.name}
+        </p>
+        <span className="w-10" />
+      </header>
+
+      <main className="relative mx-auto max-w-3xl px-4 pt-16 sm:px-6 md:pt-28">
+        <div className="relative">
           <img
             src={heroImage}
-            alt={data.name}
-            className={
-              isArtist
-                ? "h-52 w-full object-cover sm:h-64 md:h-72 md:w-[280px]"
-                : "h-56 w-full object-cover sm:h-72 md:h-[310px] md:w-[280px]"
-            }
+            alt={`${data.name} cover`}
+            className="aspect-square w-full rounded-2xl border border-white/15 object-cover"
           />
-        </div>
-
-        <div className="flex-1">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-[#f5d98d]">
-              {isArtist ? "Artist" : "Album"}
-            </span>
-            <span className="text-xs text-slate-400">
-              {songs.length} tracks
-            </span>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-3 text-white/80">
+            <Music2 size={19} />
           </div>
-
-          <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-            {data.name}
-          </h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-300">{subtitle}</p>
-
-          <div className="mt-5 flex flex-wrap items-center gap-3">
+          <div className="absolute -bottom-7 right-1 flex items-center gap-3">
             <button
+              type="button"
+              aria-label="Play collection"
               onClick={handlePlayAll}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#d4a437] to-[#f59e0b] px-5 py-2.5 text-sm font-semibold text-[#120f0a] shadow-[0_0_30px_rgba(212,164,55,0.25)] transition hover:brightness-110"
+              className="grid h-14 w-14 place-items-center rounded-full bg-orange-500 text-white shadow-lg shadow-orange-950/35"
             >
-              <Play size={16} fill="currentColor" />
-              {isVideo ? "Open first video" : "Play all"}
+              <Play size={23} fill="currentColor" className="ml-0.5" />
             </button>
-
-            <Link
-              to={`/${type}`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-slate-200 transition hover:border-[#d4a437]/50 hover:text-white"
-            >
-              <Music2 size={15} /> Explore more
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        <div className="mb-4 flex items-center justify-between gap-3 px-1">
-          <div className="flex items-center gap-2 text-[#f5d98d]">
-            <Disc3 size={16} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.22em]">
-              {isArtist ? "Popular tracks" : "Track list"}
-            </span>
-          </div>
-          <span className="text-xs text-slate-400">{songs.length} songs</span>
-        </div>
-
-        <div className="space-y-2">
-          {songs.map((song, index) => (
             <button
-              key={`${song._id || song.url}-${index}`}
-              onClick={() => handlePlayTrack(index)}
-              className="flex w-full items-center gap-3 px-1 py-2.5 text-left transition hover:bg-white/[0.01]"
+              type="button"
+              aria-label="Shuffle collection"
+              onClick={handleShuffle}
+              className="grid h-14 w-14 place-items-center rounded-full bg-[#343434] text-white"
             >
-              <div className="w-5 text-sm font-medium text-slate-400">
-                {index + 1}
-              </div>
-
-              <img
-                src={song.thumbnailUrl || song.artistAvatar || heroImage}
-                alt={song.title}
-                className="h-12 w-12 rounded-lg object-cover"
-              />
-
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-white">
-                  {song.title}
-                </p>
-                <p className="truncate text-xs text-slate-400">
-                  {song.artist || "Featured artist"}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 text-xs text-slate-400">
-                <span className="tabular-nums">
-                  {formatDuration(song.duration)}
-                </span>
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-white/5 text-white">
-                  <Play size={13} fill="currentColor" className="ml-0.5" />
-                </span>
-              </div>
+              <Shuffle size={21} />
             </button>
-          ))}
+          </div>
         </div>
-      </div>
 
-      {isArtist ? (
-        <div className="mt-6 border-t border-white/10 pt-5 text-sm text-slate-400">
-          <p className="font-medium text-white">Artist profile</p>
-          <p className="mt-2">
-            {data.name} • {songs.length} songs available
-          </p>
+        <h1 className="mt-11 font-display text-3xl font-black leading-tight text-white sm:text-4xl">
+          {data.name}
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/55">
+          {subtitle || `${songs.length} tracks`}
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            aria-label={
+              liked.collection ? "Unlike collection" : "Like collection"
+            }
+            aria-pressed={Boolean(liked.collection)}
+            onClick={() =>
+              setLiked((value) => ({ ...value, collection: !value.collection }))
+            }
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-white"
+          >
+            <Heart
+              size={15}
+              fill={liked.collection ? "currentColor" : "none"}
+              className={liked.collection ? "text-orange-400" : ""}
+            />{" "}
+            Like
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-white"
+          >
+            {data.premium ? <LockKeyhole size={15} /> : <Download size={15} />}{" "}
+            Download
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              navigator.share?.({ title: data.name, url: window.location.href })
+            }
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-white"
+          >
+            <Send size={15} /> Share
+          </button>
         </div>
-      ) : (
-        <div className="mt-6 border-t border-white/10 pt-5 text-sm text-slate-400">
-          <p className="font-medium text-white">About this album</p>
-          <p className="mt-2">
-            {data.artist} • {songs.length} tracks • {data.name}
-          </p>
+
+        <div className="mt-6 space-y-1">
+          {songs.slice(0, visibleSongCount).map((song, index) => {
+            const featured = Array.isArray(song.featuredArtists)
+              ? song.featuredArtists.join(", ")
+              : String(song.featuredArtists || "");
+            return (
+              <div
+                key={`${song._id || song.url || song.title}-${index}`}
+                className="group flex min-h-[76px] w-full items-center gap-3 py-3 text-left"
+              >
+                <button
+                  type="button"
+                  onClick={() => handlePlayTrack(index)}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                >
+                  <img
+                    src={song.thumbnailUrl || song.artistAvatar || heroImage}
+                    alt=""
+                    className="h-12 w-12 shrink-0 rounded-lg border border-white/10 object-cover"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="flex min-w-0 items-baseline gap-1 truncate text-sm font-bold text-white">
+                      <span className="truncate">{song.title}</span>
+                      {featured && (
+                        <span className="shrink-0 truncate text-xs font-semibold text-orange-400">
+                          feat. {featured}
+                        </span>
+                      )}
+                    </span>
+                    <span className="mt-1 block truncate text-xs text-white/50">
+                      {song.artist || data.artist || "Featured artist"}
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  aria-label={
+                    liked[index] ? `Unlike ${song.title}` : `Like ${song.title}`
+                  }
+                  aria-pressed={Boolean(liked[index])}
+                  onClick={() =>
+                    setLiked((value) => ({ ...value, [index]: !value[index] }))
+                  }
+                  className={`grid h-9 w-9 shrink-0 place-items-center ${liked[index] ? "text-orange-400" : "text-white/65"}`}
+                >
+                  <Heart
+                    size={18}
+                    fill={liked[index] ? "currentColor" : "none"}
+                  />
+                </button>
+                <button
+                  type="button"
+                  aria-label={`More options for ${song.title}`}
+                  className="grid h-9 w-8 shrink-0 place-items-center text-white/50"
+                >
+                  <MoreHorizontal size={20} />
+                </button>
+              </div>
+            );
+          })}
+          {visibleSongCount < songs.length && (
+            <div ref={loadMoreRef} className="h-8" aria-hidden="true" />
+          )}
         </div>
-      )}
+      </main>
     </div>
   );
 }

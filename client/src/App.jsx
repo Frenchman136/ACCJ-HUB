@@ -9,7 +9,6 @@ import MobileNav from "./components/MobileNav.jsx";
 import StickyAudioPlayer from "./components/StickyAudioPlayer.jsx";
 import { SignedInOnly, AdminOnly } from "./components/Protected.jsx";
 
-import Home from "./pages/Home.jsx";
 import Videos from "./pages/Videos.jsx";
 import Music from "./pages/Music.jsx";
 import MediaDetail from "./pages/MediaDetail.jsx";
@@ -81,9 +80,9 @@ function AnimatedRoutes() {
       ? "/videos"
       : location.pathname.startsWith("/music")
         ? "/music"
-        : "/";
+        : "/videos";
 
-    const sectionOrder = ["/", "/videos", "/music"];
+    const sectionOrder = ["/videos", "/music"];
     const index = sectionOrder.indexOf(current);
     const nextIndex = deltaX < 0 ? index + 1 : index - 1;
     const target = sectionOrder[nextIndex];
@@ -108,12 +107,14 @@ function AnimatedRoutes() {
         onTouchEnd={handleTouchEnd}
       >
         <Routes location={location}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Videos />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/videos/:id" element={<MediaDetail />} />
           <Route path="/videos/artist/:slug" element={<CollectionDetail />} />
           <Route path="/videos/album/:slug" element={<CollectionDetail />} />
           <Route path="/music" element={<Music />} />
+          <Route path="/music/album/:slug" element={<CollectionDetail />} />
+          <Route path="/music/playlist/:slug" element={<CollectionDetail />} />
           <Route path="/music/:id" element={<MediaDetail />} />
           <Route path="/music/artist/:slug" element={<CollectionDetail />} />
           <Route path="/music/album/:slug" element={<CollectionDetail />} />
@@ -139,7 +140,7 @@ function AnimatedRoutes() {
             <Route path="categories" element={<ManageCategories />} />
             <Route path="admins" element={<ManageAdmins />} />
           </Route>
-          <Route path="*" element={<Home />} />
+          <Route path="*" element={<Videos />} />
         </Routes>
       </motion.main>
     </AnimatePresence>

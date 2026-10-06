@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
 import { LogIn, LogOut, User as UserIcon, Shield, Radio } from "lucide-react";
@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 const adminRoles = ["admin", "super_admin"];
 
 export default function Navbar() {
+  const location = useLocation();
   const { user, isSignedIn } = useUser();
   const { signOut, openSignIn } = useClerk();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,6 +28,14 @@ export default function Navbar() {
     { to: "/videos", label: "Videos" },
     { to: "/music", label: "Music" },
   ];
+
+  if (
+    location.pathname === "/" ||
+    location.pathname.startsWith("/videos") ||
+    location.pathname.startsWith("/music")
+  ) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-x-0 border-t-0 border-white/10 bg-[#171717]/90 backdrop-blur-xl">

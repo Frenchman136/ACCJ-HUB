@@ -1,4 +1,5 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import multer from "multer";
 import Media from "../models/Media.js";
 import Category from "../models/Category.js";
@@ -28,6 +29,52 @@ const SORTS = {
   comments: { commentsCount: -1 },
   views: { views: -1 },
 };
+
+const demoVideoUrls = [
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://www.w3schools.com/html/mov_bbb.mp4",
+  "https://www.w3schools.com/html/movie.mp4",
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "https://media.w3.org/2010/05/sintel/trailer.mp4",
+  "https://www.w3schools.com/html/mov_bbb.mp4",
+  "https://www.w3schools.com/html/movie.mp4",
+];
+
+const demoMusicUrls = [
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+];
+
+const demoVideoThumbs = [
+  "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4",
+  "https://images.unsplash.com/photo-1516280440614-37939bbacd81",
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+  "https://images.unsplash.com/photo-1493246507139-91e8fad9978e",
+  "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
+  "https://images.unsplash.com/photo-1516321497487-e288fb19713f",
+  "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3",
+];
+
+const demoMusicThumbs = [
+  "https://images.unsplash.com/photo-1516280440614-37939bbacd81",
+  "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+  "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+  "https://images.unsplash.com/photo-1501386761578-eac5c94b800a",
+  "https://images.unsplash.com/photo-1504542982118-59308b40fe0c",
+  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1",
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+  "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4",
+];
+
+const isDbReady = () => mongoose.connection.readyState === 1;
 
 async function fetchDemoFallbackVideos(limit = 8) {
   const urls = [
@@ -115,9 +162,10 @@ async function fetchDeezerFallbackMusic(limit = 8) {
           thumbnailUrl: track.album.cover_medium || track.album.cover_big,
           thumbnailPublicId: `deezer-thumb-${track.id}`,
           category: null,
+          categoryName: "Demo Music",
           uploadedBy: "demo-deezer",
           likes: [],
-          views: 0,
+          views: 1,
           duration: Number(track.duration) || 180,
           downloadable: false,
           createdAt: new Date().toISOString(),
@@ -131,6 +179,36 @@ async function fetchDeezerFallbackMusic(limit = 8) {
       }
     } catch (error) {
       console.warn("Deezer fallback fetch failed:", error.message);
+    }
+  }
+
+  if (items.length < limit) {
+    const fallbackSongs = demoMusicUrls.map((url, index) => ({
+      _id: `demo-music-${index + 1}`,
+      type: "music",
+      title: `Demo Track ${index + 1}`,
+      description: "Fallback sample song for local development before real uploads.",
+      url,
+      publicId: `demo-music-${index + 1}`,
+      thumbnailUrl: demoMusicThumbs[index] || demoMusicThumbs[0],
+      thumbnailPublicId: `demo-music-thumb-${index + 1}`,
+      category: null,
+      categoryName: "Demo Music",
+      uploadedBy: "demo-local",
+      likes: [],
+      views: 1 + index,
+      duration: 180 + index * 7,
+      downloadable: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      likesCount: 0,
+      commentsCount: 0,
+      myLike: false,
+    }));
+
+    for (const song of fallbackSongs) {
+      if (items.length >= limit) break;
+      items.push(song);
     }
   }
 
@@ -219,6 +297,17 @@ router.get(
   "/:id",
   optionalAuth,
   asyncHandler(async (req, res) => {
+    if (!isDbReady()) {
+      const fallback = [
+        ...(await fetchDemoFallbackVideos(8)),
+        ...(await fetchDeezerFallbackMusic(8)),
+      ].find((item) => item._id === req.params.id || item.url === req.params.id);
+      if (!fallback) {
+        return res.status(404).json({ error: "Media not found" });
+      }
+      return res.json({ ...fallback, myLike: false });
+    }
+
     const media = await Media.findByIdAndUpdate(
       req.params.id,
       { $inc: { views: 1 } },

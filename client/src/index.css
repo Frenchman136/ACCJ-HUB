@@ -70,6 +70,14 @@ a.bg-accent,
 }
 
 /* Hero typewriter effect */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

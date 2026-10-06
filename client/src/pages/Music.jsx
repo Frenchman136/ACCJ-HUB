@@ -1,4 +1,5 @@
-import MediaBrowser from '../components/MediaBrowser.jsx';
+import MusicShell from "./MusicShell.jsx";
+
 export default function Music() {
-  return <MediaBrowser type="music" />;
+  return <MusicShell />;
 }

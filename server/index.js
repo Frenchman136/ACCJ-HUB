@@ -76,8 +76,18 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-connectDB().then(() => {
-  app.listen(PORT, () =>
-    console.log(`Sound Groove API running on port ${PORT}`),
+
+if (process.env.MONGO_URI) {
+  connectDB().then(() => {
+    app.listen(PORT, () =>
+      console.log(`Sound Groove API running on port ${PORT}`),
+    );
+  });
+} else {
+  console.warn(
+    "MONGO_URI is not set. Starting in demo mode without a database connection.",
   );
-});
+  app.listen(PORT, () =>
+    console.log(`Sound Groove API running in demo mode on port ${PORT}`),
+  );
+}

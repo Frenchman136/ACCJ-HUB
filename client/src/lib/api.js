@@ -16,7 +16,6 @@ export function useApi() {
       params,
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {}),
         ...headers,
       },
     });
