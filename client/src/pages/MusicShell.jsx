@@ -520,26 +520,38 @@ export default function MusicShell() {
           </button>
           {searchOpen && searchQuery.trim() && (
             <div className="absolute right-4 top-[calc(100%-2px)] z-[60] max-h-[min(60vh,24rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-white/10 bg-[#121212]/98 p-2 shadow-2xl backdrop-blur-xl sm:right-6">
-              {searchResults.length ? searchResults.map((track, index) => (
-                <button
-                  key={track._id}
-                  type="button"
-                  onClick={() => {
-                    playTrack(track, index);
-                    setSearchOpen(false);
-                    setSearchQuery("");
-                  }}
-                  className="flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-white/[0.06]"
-                >
-                  <img src={track.thumbnailUrl} alt="" className="h-10 w-10 rounded-lg object-cover" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-bold text-white">{track.title}</span>
-                    <span className="block truncate text-xs text-white/45">{track.artist} · {track.album}</span>
-                  </span>
-                  <Play size={15} className="text-green-400" />
-                </button>
-              )) : (
-                <p className="px-3 py-4 text-sm text-white/45">No matching tracks</p>
+              {searchResults.length ? (
+                searchResults.map((track, index) => (
+                  <button
+                    key={track._id}
+                    type="button"
+                    onClick={() => {
+                      playTrack(track, index);
+                      setSearchOpen(false);
+                      setSearchQuery("");
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl p-2 text-left hover:bg-white/[0.06]"
+                  >
+                    <img
+                      src={track.thumbnailUrl}
+                      alt=""
+                      className="h-10 w-10 rounded-lg object-cover"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-bold text-white">
+                        {track.title}
+                      </span>
+                      <span className="block truncate text-xs text-white/45">
+                        {track.artist} · {track.album}
+                      </span>
+                    </span>
+                    <Play size={15} className="text-green-400" />
+                  </button>
+                ))
+              ) : (
+                <p className="px-3 py-4 text-sm text-white/45">
+                  No matching tracks
+                </p>
               )}
             </div>
           )}
@@ -833,7 +845,6 @@ export default function MusicShell() {
             )}
           </div>
         </section>
-
       </main>
 
       <AnimatePresence>

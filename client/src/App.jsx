@@ -6,7 +6,7 @@ import { PlayerProvider } from "./context/PlayerContext.jsx";
 import Navbar from "./components/Navbar.jsx";
 import MobileNav from "./components/MobileNav.jsx";
 import StickyAudioPlayer from "./components/StickyAudioPlayer.jsx";
-import { SignedInOnly, AdminOnly } from "./components/Protected.jsx";
+import { AdminOnly } from "./components/Protected.jsx";
 
 import Videos from "./pages/Videos.jsx";
 import Music from "./pages/Music.jsx";
@@ -72,14 +72,7 @@ function AnimatedRoutes() {
           <Route path="/music/:id" element={<MediaDetail />} />
           <Route path="/music/artist/:slug" element={<CollectionDetail />} />
           <Route path="/music/album/:slug" element={<CollectionDetail />} />
-          <Route
-            path="/profile"
-            element={
-              <SignedInOnly>
-                <Profile />
-              </SignedInOnly>
-            }
-          />
+          <Route path="/profile" element={<Profile />} />
           <Route
             path="/admin"
             element={

@@ -14,6 +14,7 @@ export default function Navbar() {
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const role = user?.publicMetadata?.role || "user";
+  const isProfilePage = location.pathname === "/profile";
 
   useEffect(() => {
     const close = (e) =>
@@ -41,8 +42,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-x-0 border-t-0 border-white/10 bg-[#171717]/90 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="group flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-accent to-accent-blue shadow-glow-sm transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105">
-            <Radio size={18} className="text-white" />
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-green-400 to-green-600 shadow-[0_0_20px_rgba(34,197,94,.22)] transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105">
+            <Radio size={18} className="text-[#071a0d]" />
           </span>
 
           <motion.span
@@ -51,7 +52,7 @@ export default function Navbar() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="hidden overflow-hidden font-display text-[0.85rem] font-bold tracking-tight md:inline-block"
           >
-            <span className="grad-text">Sound</span>{" "}
+            <span className="text-green-400">Sound</span>{" "}
             <span className="text-white">Groove</span>
           </motion.span>
 
@@ -64,17 +65,18 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-7 md:flex">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) =>
-                `nav-link rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${isActive ? "bg-[#2a2a2a] text-white" : "text-slate-400 hover:text-white"}`
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
+          {!isProfilePage &&
+            links.map((l) => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                className={({ isActive }) =>
+                  `nav-link rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${isActive ? "bg-[#2a2a2a] text-white" : "text-slate-400 hover:text-white"}`
+                }
+              >
+                {l.label}
+              </NavLink>
+            ))}
           {isSignedIn && adminRoles.includes(role) && (
             <NavLink
               to="/admin"

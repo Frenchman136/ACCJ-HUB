@@ -1,27 +1,41 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, MessageCircle, Shield, ShieldCheck } from "lucide-react";
-import { useUser } from "@clerk/clerk-react";
+import {
+  Heart,
+  LogIn,
+  LogOut,
+  Shield,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
+import { useClerk, useUser } from "@clerk/clerk-react";
 import { useApi } from "../lib/api.js";
 import MediaCard from "../components/MediaCard.jsx";
-import { timeAgo } from "../lib/utils.js";
 
 export default function Profile() {
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const { openSignIn, signOut } = useClerk();
   const { request } = useApi();
   const [liked, setLiked] = useState(null);
-  const [comments, setComments] = useState(null);
   const role = user?.publicMetadata?.role || "user";
 
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) {
+      setLiked([]);
+      return;
+    }
     request("/media/liked")
       .then(setLiked)
       .catch(() => setLiked([]));
-    request("/me/comments")
-      .then(setComments)
-      .catch(() => setComments([]));
-  }, []);
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded) {
+    return (
+      <div className="grid min-h-[50vh] place-items-center text-sm text-white/45">
+        Loading your account...
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-32 pt-10 sm:px-6 md:pb-16 md:pt-28">
@@ -29,100 +43,101 @@ export default function Profile() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass flex flex-col items-center gap-5 rounded-3xl p-8 sm:flex-row sm:items-start"
+        className="relative overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(135deg,rgba(34,197,94,.13),rgba(255,255,255,.04)_48%,rgba(255,255,255,.02))] p-6 shadow-[0_24px_80px_rgba(0,0,0,.28)] sm:p-8"
       >
-        <img
-          src={user.imageUrl}
-          alt={user.fullName}
-          className="h-24 w-24 rounded-full border-2 border-accent/50 object-cover shadow-glow-sm"
-        />
-        <div className="text-center sm:text-left">
-          <h1 className="font-display text-2xl font-bold text-white">
-            {user.fullName || user.username}
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            {user.primaryEmailAddress?.emailAddress}
-          </p>
-          <span
-            className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-              role === "super_admin"
-                ? "bg-green-500/15 text-green-300"
-                : role === "admin"
-                  ? "bg-accent/15 text-accent-soft"
-                  : "bg-white/5 text-slate-400"
-            }`}
-          >
-            {role === "super_admin" ? (
-              <ShieldCheck size={12} />
+        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full border border-green-400/10" />
+        <div className="relative flex flex-col items-center gap-5 sm:flex-row sm:items-center">
+          <div className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-green-400/45 bg-[#171a18] shadow-[0_0_36px_rgba(34,197,94,.15)]">
+            {isSignedIn && user.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt={user.fullName || "Your account photo"}
+                className="h-full w-full object-cover"
+              />
             ) : (
-              <Shield size={12} />
+              <UserRound size={34} className="text-white/35" />
             )}
-            {role.replace("_", " ")}
-          </span>
+          </div>
+          <div className="min-w-0 flex-1 text-center sm:text-left">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-green-300/75">
+              {isSignedIn ? "Your account" : "Member profile"}
+            </p>
+            <h1 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {isSignedIn
+                ? user.fullName || user.username || "Sound Groove member"
+                : "Welcome to Sound Groove"}
+            </h1>
+            <p className="mt-1 break-all text-sm text-slate-400">
+              {isSignedIn
+                ? user.primaryEmailAddress?.emailAddress || "Email not provided"
+                : "Sign in to view your profile and liked media."}
+            </p>
+            {isSignedIn ? (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold capitalize ${
+                    role === "super_admin"
+                      ? "bg-green-500/15 text-green-300"
+                      : role === "admin"
+                        ? "bg-green-500/10 text-green-200"
+                        : "bg-white/[0.07] text-white/60"
+                  }`}
+                >
+                  {role === "super_admin" ? (
+                    <ShieldCheck size={13} />
+                  ) : (
+                    <Shield size={13} />
+                  )}
+                  {role.replace("_", " ")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => signOut()}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-bold text-white/80 transition hover:border-green-400/45 hover:bg-green-400/10 hover:text-white"
+                >
+                  <LogOut size={14} /> Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openSignIn()}
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-green-500 px-5 py-2.5 text-sm font-bold text-[#071a0d] shadow-[0_8px_28px_rgba(34,197,94,.2)] transition hover:bg-green-400"
+              >
+                <LogIn size={16} /> Sign in
+              </button>
+            )}
+          </div>
         </div>
       </motion.div>
 
-      {/* liked media */}
-      <section className="mt-12">
-        <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
-          <Heart size={18} className="text-accent-soft" /> Liked media
-          <span className="text-sm font-medium text-slate-500">
-            {liked?.length ?? ""}
-          </span>
-        </h2>
-        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {liked === null &&
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="skeleton aspect-[4/3] rounded-2xl" />
-            ))}
-          {liked?.length === 0 && (
-            <p className="col-span-full rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-500">
-              Nothing liked yet — tap the heart on anything you love.
-            </p>
-          )}
-          {liked?.map((item, i) => (
-            <MediaCard key={item._id} item={item} index={i} />
-          ))}
-        </div>
-      </section>
-
-      {/* comment history */}
-      <section className="mt-12">
-        <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
-          <MessageCircle size={18} className="text-accent-soft" /> Comment
-          history
-        </h2>
-        <div className="mt-5 space-y-3">
-          {comments === null &&
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="skeleton h-16 rounded-2xl" />
-            ))}
-          {comments?.length === 0 && (
-            <p className="rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-500">
-              No comments yet.
-            </p>
-          )}
-          {comments?.map((c) => (
-            <Link
-              key={c._id}
-              to={`/${c.media?.type === "music" ? "music" : "videos"}/${c.media?._id}`}
-              className="glass block rounded-2xl p-4 transition-colors hover:border-accent/40"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className="truncate text-sm font-semibold text-accent-soft">
-                  {c.media?.title || "Deleted media"}
-                </span>
-                <span className="shrink-0 text-xs text-slate-500">
-                  {timeAgo(c.createdAt)}
-                </span>
-              </div>
-              <p className="mt-1.5 line-clamp-2 text-sm text-slate-300">
-                {c.text}
-              </p>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {isSignedIn && (
+        <>
+          {/* liked media */}
+          <section className="mt-12">
+            <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
+              <Heart size={18} className="text-accent-soft" /> Liked media
+              <span className="text-sm font-medium text-slate-500">
+                {liked?.length ?? ""}
+              </span>
+            </h2>
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {liked === null &&
+                [...Array(4)].map((_, i) => (
+                  <div key={i} className="skeleton aspect-[4/3] rounded-2xl" />
+                ))}
+              {liked?.length === 0 && (
+                <p className="col-span-full rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-500">
+                  Nothing liked yet — tap the heart on anything you love.
+                </p>
+              )}
+              {liked?.map((item, i) => (
+                <MediaCard key={item._id} item={item} index={i} />
+              ))}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }
