@@ -297,6 +297,16 @@ router.get(
   "/:id",
   optionalAuth,
   asyncHandler(async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      const demoMedia = [
+        ...(await fetchDemoFallbackVideos(8)),
+        ...(await fetchDeezerFallbackMusic(8)),
+      ].find((item) => item._id === req.params.id || item.url === req.params.id);
+
+      if (!demoMedia) return res.status(404).json({ error: "Media not found" });
+      return res.json({ ...demoMedia, myLike: false });
+    }
+
     if (!isDbReady()) {
       const fallback = [
         ...(await fetchDemoFallbackVideos(8)),

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -15,6 +15,7 @@ import { useApi, errMsg } from "../lib/api.js";
 import { useToast } from "../context/ToastContext.jsx";
 import { usePlayer } from "../context/PlayerContext.jsx";
 import VideoPlayer from "../components/VideoPlayer.jsx";
+import VideoWatch from "../components/VideoWatch.jsx";
 import LikeButton from "../components/LikeButton.jsx";
 import CommentSection from "../components/CommentSection.jsx";
 import MediaCard from "../components/MediaCard.jsx";
@@ -22,7 +23,9 @@ import { timeAgo } from "../lib/utils.js";
 
 export default function MediaDetail() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  const isMusicRoute = location.pathname.startsWith("/music/");
   const { request } = useApi();
   const toast = useToast();
   const player = usePlayer();
@@ -66,9 +69,19 @@ export default function MediaDetail() {
   if (error)
     return (
       <div className="mx-auto max-w-7xl px-4 py-24 text-center">
-        <p className="text-lg text-rose-400">{error}</p>
-        <Link to="/" className="mt-4 inline-block text-accent-soft underline">
-          Back home
+        <p className="text-lg font-semibold text-white">
+          {error.includes("not found") || error.includes("Not found")
+            ? `${isMusicRoute ? "Track" : "Video"} not found`
+            : "We couldn't load this media"}
+        </p>
+        <p className="mt-2 text-sm text-white/45">
+          This link may be invalid or the media may have been removed.
+        </p>
+        <Link
+          to={isMusicRoute ? "/music" : "/videos"}
+          className="mt-5 inline-flex rounded-full border border-green-400/30 px-4 py-2 text-sm font-semibold text-green-300 transition hover:bg-green-500/10"
+        >
+          Back to {isMusicRoute ? "Music" : "Videos"}
         </Link>
       </div>
     );
@@ -104,6 +117,20 @@ export default function MediaDetail() {
     const target = queue[queueIndex + offset];
     if (target) navigate(`/${isMusic ? "music" : "videos"}/${target._id}`);
   };
+
+  if (!isMusic) {
+    return (
+      <VideoWatch
+        media={media}
+        related={related}
+        hasPrev={queueIndex > 0}
+        hasNext={queueIndex >= 0 && queueIndex < queue.length - 1}
+        onPrev={() => goTo(-1)}
+        onNext={() => goTo(1)}
+        onShare={share}
+      />
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-32 pt-8 sm:px-6 md:pb-16">
