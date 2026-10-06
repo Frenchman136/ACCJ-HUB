@@ -11,7 +11,7 @@ body {
   background-image:
     radial-gradient(
       60rem 40rem at 85% -10%,
-      rgba(212, 164, 55, 0.08),
+      rgba(34, 197, 94, 0.08),
       transparent 60%
     ),
     radial-gradient(
@@ -22,17 +22,17 @@ body {
   background-attachment: fixed;
 }
 
-/* Button-only gold accent override */
+/* Shared green accent for buttons */
 button.bg-gradient-to-r.from-accent.to-accent-blue,
 a.bg-gradient-to-r.from-accent.to-accent-blue,
 button.bg-accent,
 a.bg-accent,
 [role="button"].bg-gradient-to-r.from-accent.to-accent-blue,
 [role="button"].bg-accent {
-  background-image: linear-gradient(90deg, #d4a437 0%, #f59e0b 100%) !important;
-  background-color: #d4a437 !important;
-  border-color: rgba(212, 164, 55, 0.58) !important;
-  box-shadow: 0 0 24px -8px rgba(212, 164, 55, 0.7) !important;
+  background-image: linear-gradient(90deg, #22c55e 0%, #16a34a 100%) !important;
+  background-color: #22c55e !important;
+  border-color: rgba(34, 197, 94, 0.58) !important;
+  box-shadow: 0 0 24px -8px rgba(34, 197, 94, 0.55) !important;
 }
 
 ::selection {
@@ -61,7 +61,7 @@ a.bg-accent,
   height: 2px;
   width: 0;
   border-radius: 9999px;
-  background: linear-gradient(90deg, #d4a437, #f59e0b);
+  background: linear-gradient(90deg, #22c55e, #16a34a);
   transition: width 0.25s ease;
 }
 .nav-link:hover::after,
@@ -104,7 +104,7 @@ input[type="range"].player-range::-webkit-slider-runnable-track {
   border-radius: 9999px;
   background: linear-gradient(
     90deg,
-    #d4a437 var(--fill, 0%),
+    #22c55e var(--fill, 0%),
     rgba(255, 255, 255, 0.15) var(--fill, 0%)
   );
 }
@@ -115,7 +115,7 @@ input[type="range"].player-range::-webkit-slider-thumb {
   margin-top: -4.5px;
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 0 10px rgba(212, 164, 55, 0.9);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
   transition: transform 0.15s ease;
 }
 input[type="range"].player-range::-webkit-slider-thumb:hover {

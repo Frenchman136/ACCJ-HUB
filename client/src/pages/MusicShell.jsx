@@ -212,8 +212,6 @@ const commentRows = [
 
 const sectionLabel =
   "text-[10px] font-bold uppercase tracking-[0.25em] text-white/40";
-const orange = "#22c55e";
-
 function SongRow({ item, index, onPlay, compact = false }) {
   const player = usePlayer();
   const isPlaying = player.current?._id === item._id && player.playing;
@@ -302,10 +300,10 @@ function SectionHeader({ title, action = "chevron", badge }) {
   );
 }
 
-function TinyAvatar({ src, name, ring = false, orangeRing = false }) {
+function TinyAvatar({ src, name, ring = false, greenRing = false }) {
   return (
     <div
-      className={`relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 ${ring ? (orangeRing ? "ring-2 ring-orange-400" : "ring-2 ring-green-400") : ""}`}
+      className={`relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 ${ring ? (greenRing ? "ring-2 ring-green-400" : "ring-2 ring-green-400") : ""}`}
     >
       {src ? (
         <img src={src} alt={name} className="h-full w-full object-cover" />
@@ -313,7 +311,7 @@ function TinyAvatar({ src, name, ring = false, orangeRing = false }) {
         <UserRound size={18} className="text-white/45" />
       )}
       <span
-        className={`absolute bottom-0 right-0 grid h-4 w-4 place-items-center rounded-full ${orangeRing ? "bg-orange-500" : "bg-green-500"} text-[#111]`}
+        className={`absolute bottom-0 right-0 grid h-4 w-4 place-items-center rounded-full ${greenRing ? "bg-green-500" : "bg-green-500"} text-[#111]`}
       >
         <Check size={9} strokeWidth={3} />
       </span>
@@ -880,7 +878,7 @@ export default function MusicShell() {
                     <button
                       key={label}
                       type="button"
-                      className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-[11px] font-semibold text-white/80 transition hover:border-orange-400/60 hover:text-orange-300"
+                      className="flex shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 py-2.5 text-[11px] font-semibold text-white/80 transition hover:border-green-400/60 hover:text-green-300"
                     >
                       {index === 0 ? (
                         <Heart size={14} />
@@ -926,7 +924,7 @@ export default function MusicShell() {
                   {[...Array(72)].map((_, index) => (
                     <span
                       key={index}
-                      className={`w-full rounded-full ${index / 72 <= (player.duration ? player.progress / player.duration : 0) ? "bg-orange-400" : "bg-white/20"}`}
+                      className={`w-full rounded-full ${index / 72 <= (player.duration ? player.progress / player.duration : 0) ? "bg-green-400" : "bg-white/20"}`}
                       style={{ height: `${18 + ((index * 17) % 67)}%` }}
                     />
                   ))}
@@ -979,7 +977,7 @@ export default function MusicShell() {
                   aria-label="Shuffle"
                   onClick={player.toggleShuffle}
                   aria-pressed={player.shuffle}
-                  className={`grid h-10 w-10 place-items-center rounded-full ${player.shuffle ? "text-orange-400" : "text-white/55"}`}
+                  className={`grid h-10 w-10 place-items-center rounded-full ${player.shuffle ? "text-green-400" : "text-white/55"}`}
                 >
                   <Shuffle size={18} />
                 </button>
@@ -996,7 +994,7 @@ export default function MusicShell() {
                   >
                     <span>Effects</span>
                     <span
-                      className={`relative h-5 w-9 rounded-full transition ${effectsOn ? "bg-orange-500" : "bg-white/20"}`}
+                      className={`relative h-5 w-9 rounded-full transition ${effectsOn ? "bg-green-500" : "bg-white/20"}`}
                     >
                       <span
                         className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition ${effectsOn ? "right-0.5" : "left-0.5"}`}
@@ -1012,7 +1010,7 @@ export default function MusicShell() {
                       onClick={() => setEffectsOn(true)}
                       className="relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#262626] to-[#0e0e0e]"
                     >
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(249,115,22,.45),transparent_50%)]" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(34,197,94,.45),transparent_50%)]" />
                       <p className="absolute inset-x-0 bottom-3 text-center text-[10px] font-bold">
                         {label}
                       </p>
@@ -1062,18 +1060,18 @@ export default function MusicShell() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-bold">
                       {artistName}{" "}
-                      <span className="ml-1 inline-grid h-3.5 w-3.5 place-items-center rounded-full bg-orange-500 align-middle text-black">
+                      <span className="ml-1 inline-grid h-3.5 w-3.5 place-items-center rounded-full bg-green-500 align-middle text-black">
                         <Check size={9} strokeWidth={3} />
                       </span>
                     </p>
                     <p className="mt-1 text-xs">
-                      <span className="font-bold text-orange-400">1.8M</span>{" "}
+                      <span className="font-bold text-green-400">1.8M</span>{" "}
                       <span className="text-white/80">Followers</span>
                     </p>
                   </div>
                   <button
                     type="button"
-                    className="rounded-full border border-orange-400/70 px-4 py-2 text-[11px] font-bold text-white"
+                    className="rounded-full border border-green-400/70 px-4 py-2 text-[11px] font-bold text-white"
                   >
                     Follow
                   </button>
@@ -1100,7 +1098,7 @@ export default function MusicShell() {
                       <strong>Album:</strong>{" "}
                       <button
                         type="button"
-                        className="font-medium text-orange-400"
+                        className="font-medium text-green-400"
                       >
                         {albumName}
                       </button>
@@ -1127,7 +1125,7 @@ export default function MusicShell() {
                   onClick={() => setExpanded(!expanded)}
                   className="relative z-[1] mx-auto -mt-5 flex items-center justify-center gap-2 rounded-full bg-[#171717] px-5 py-2.5 text-[11px] font-bold text-white"
                 >
-                  <ArrowDown size={13} className="text-orange-400" />
+                  <ArrowDown size={13} className="text-green-400" />
                   {expanded ? "Show less" : "Read more"}
                 </button>
               </div>
@@ -1192,7 +1190,7 @@ export default function MusicShell() {
                           alt=""
                           className="h-full w-full object-cover"
                         />
-                        <span className="absolute left-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-orange-300">
+                        <span className="absolute left-2 top-2 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-green-300">
                           <ListMusic size={13} />
                         </span>
                         <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-2 pt-7">
@@ -1219,7 +1217,7 @@ export default function MusicShell() {
                     src="/artists/Aura.jpg"
                     name="Maya"
                     ring
-                    orangeRing
+                    greenRing
                   />
                   <TinyAvatar src="/artists/Chacho%20Majunga.jpeg" name="Eli" />
                   <TinyAvatar src="/artists/Aura.jpg" name="Noah" />
@@ -1229,9 +1227,9 @@ export default function MusicShell() {
                 </div>
                 <button
                   type="button"
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-orange-400/70 py-3 text-[11px] font-bold text-white"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-green-400/70 py-3 text-[11px] font-bold text-white"
                 >
-                  <Plus size={15} className="text-orange-400" />
+                  <Plus size={15} className="text-green-400" />
                   Support this project
                 </button>
               </div>
@@ -1250,7 +1248,7 @@ export default function MusicShell() {
                   />
                   <button
                     type="button"
-                    className="grid h-8 w-8 place-items-center rounded-full bg-orange-500 text-black"
+                    className="grid h-8 w-8 place-items-center rounded-full bg-green-500 text-black"
                   >
                     <Plus size={14} />
                   </button>
@@ -1277,7 +1275,7 @@ export default function MusicShell() {
                         <span>👍</span>
                         <span>👎</span>
                         <span>{comment.reply || ""}</span>
-                        <span className="text-orange-400">Reply</span>
+                        <span className="text-green-400">Reply</span>
                       </div>
                     </div>
                   </div>
@@ -1466,3 +1464,4 @@ export default function MusicShell() {
     </div>
   );
 }
+

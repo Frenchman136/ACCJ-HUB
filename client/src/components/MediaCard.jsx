@@ -37,7 +37,7 @@ export default function MediaCard({ item, index = 0 }) {
               }`}
             />
             <span className="absolute inset-0 grid place-items-center bg-gradient-to-t from-ink-950/60 via-transparent to-transparent">
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-[#d4a437]/90 shadow-glow-sm backdrop-blur-sm">
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-green-500/90 shadow-glow-sm backdrop-blur-sm">
                 <Music2 className="text-white" size={14} />
               </span>
             </span>
@@ -101,7 +101,7 @@ export default function MediaCard({ item, index = 0 }) {
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="grid h-16 w-16 place-items-center rounded-full bg-[#d4a437]/95 shadow-[0_0_30px_rgba(212,164,55,0.45)] backdrop-blur-sm"
+              className="grid h-16 w-16 place-items-center rounded-full bg-green-500/95 shadow-[0_0_30px_rgba(34,197,94,0.45)] backdrop-blur-sm"
               whileHover={{ scale: 1.12 }}
             >
               <Play className="ml-1 text-white" size={26} fill="currentColor" />

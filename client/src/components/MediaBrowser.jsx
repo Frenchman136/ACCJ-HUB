@@ -186,7 +186,7 @@ export default function MediaBrowser({ type }) {
         <>
           <div className="mt-8">
             <div className="mb-4 flex items-center gap-3">
-              <p className="text-[10px] uppercase tracking-[0.28em] text-[#d4a437]">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-green-400">
                 Browse
               </p>
               <h2 className="font-display text-2xl font-bold text-white">
@@ -209,7 +209,7 @@ export default function MediaBrowser({ type }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-3 text-white">
-                      <span className="rounded-full bg-black/40 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#f5d98d]">
+                      <span className="rounded-full bg-black/40 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-green-300">
                         Album
                       </span>
                       <span className="rounded-full bg-white/10 px-2 py-1 text-[10px] backdrop-blur-sm">
@@ -232,7 +232,7 @@ export default function MediaBrowser({ type }) {
 
           <div className="mt-8">
             <div className="mb-4 flex items-center gap-3">
-              <p className="text-[10px] uppercase tracking-[0.28em] text-[#d4a437]">
+              <p className="text-[10px] uppercase tracking-[0.28em] text-green-400">
                 Featured
               </p>
               <h2 className="font-display text-2xl font-bold text-white">

@@ -46,7 +46,7 @@ export default function Profile() {
           <span
             className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
               role === "super_admin"
-                ? "bg-amber-500/15 text-amber-300"
+                ? "bg-green-500/15 text-green-300"
                 : role === "admin"
                   ? "bg-accent/15 text-accent-soft"
                   : "bg-white/5 text-slate-400"

@@ -214,7 +214,7 @@ export default function ManageMedia() {
                     onChange={(e) =>
                       setEditing({ ...editing, downloadable: e.target.checked })
                     }
-                    className="h-4 w-4 accent-[#d4a437]"
+                    className="h-4 w-4 accent-green-500"
                   />
                   Allow downloads
                 </label>

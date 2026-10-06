@@ -248,7 +248,7 @@ export default function CollectionDetail() {
               type="button"
               aria-label="Play collection"
               onClick={handlePlayAll}
-              className="grid h-14 w-14 place-items-center rounded-full bg-orange-500 text-white shadow-lg shadow-orange-950/35"
+              className="grid h-14 w-14 place-items-center rounded-full bg-green-500 text-white shadow-lg shadow-green-950/35"
             >
               <Play size={23} fill="currentColor" className="ml-0.5" />
             </button>
@@ -284,7 +284,7 @@ export default function CollectionDetail() {
             <Heart
               size={15}
               fill={liked.collection ? "currentColor" : "none"}
-              className={liked.collection ? "text-orange-400" : ""}
+              className={liked.collection ? "text-green-400" : ""}
             />{" "}
             Like
           </button>
@@ -330,7 +330,7 @@ export default function CollectionDetail() {
                     <span className="flex min-w-0 items-baseline gap-1 truncate text-sm font-bold text-white">
                       <span className="truncate">{song.title}</span>
                       {featured && (
-                        <span className="shrink-0 truncate text-xs font-semibold text-orange-400">
+                        <span className="shrink-0 truncate text-xs font-semibold text-green-400">
                           feat. {featured}
                         </span>
                       )}
@@ -349,7 +349,7 @@ export default function CollectionDetail() {
                   onClick={() =>
                     setLiked((value) => ({ ...value, [index]: !value[index] }))
                   }
-                  className={`grid h-9 w-9 shrink-0 place-items-center ${liked[index] ? "text-orange-400" : "text-white/65"}`}
+                  className={`grid h-9 w-9 shrink-0 place-items-center ${liked[index] ? "text-green-400" : "text-white/65"}`}
                 >
                   <Heart
                     size={18}
