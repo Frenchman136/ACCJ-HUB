@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ChevronRight, Flame, Play, Radio, Search } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronRight, Flame, Play, Radio, Search, X } from "lucide-react";
 
 const heroSlides = [
   {
@@ -85,6 +85,14 @@ const sectionTitle = "text-base font-bold tracking-tight text-white sm:text-lg";
 
 export default function Videos() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [demoVideo, setDemoVideo] = useState(null);
+
+  const playDemo = (index = 0, title = "Demo video") => {
+    setDemoVideo({
+      src: `/demo/video-demo-${(index % 2) + 1}.mp4`,
+      title,
+    });
+  };
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -151,6 +159,7 @@ export default function Videos() {
               </p>
               <button
                 type="button"
+                onClick={() => playDemo(activeSlide, slide.title)}
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/30 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition hover:border-green-400/70 hover:bg-green-500 hover:text-[#071a0d]"
               >
                 <Play size={16} fill="currentColor" /> Watch free
@@ -187,18 +196,23 @@ export default function Videos() {
           </div>
           <div className="rounded-3xl border border-white/10 bg-[#111] p-3 shadow-2xl">
             <div className="flex gap-3">
-              <div className="relative w-[42%] shrink-0 overflow-hidden rounded-2xl bg-black">
+              <button
+                type="button"
+                onClick={() => playDemo(0, "The Green Room")}
+                aria-label="Play The Green Room demo"
+                className="group relative w-[42%] shrink-0 overflow-hidden rounded-2xl bg-black"
+              >
                 <img
                   src="/artists/Aura.jpg"
                   alt="Continue watching poster"
                   className="aspect-[3/4] w-full object-cover"
                 />
                 <span className="absolute inset-0 grid place-items-center">
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur-md">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-green-500 text-[#071a0d] transition group-hover:scale-110">
                     <Play size={17} fill="currentColor" />
                   </span>
                 </span>
-              </div>
+              </button>
               <div className="flex min-w-0 flex-1 flex-col justify-center py-1">
                 <p className="truncate font-display text-base font-bold text-white">
                   The Green Room
@@ -227,7 +241,7 @@ export default function Videos() {
             </button>
           </div>
           <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
-            {posterItems.map((item) => (
+            {posterItems.map((item, index) => (
               <article
                 key={item.title}
                 className="group w-[62%] min-w-[62%] snap-start sm:w-[44%] sm:min-w-[44%]"
@@ -239,9 +253,14 @@ export default function Videos() {
                     className="aspect-[3/4] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-black/50 text-white backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => playDemo(index, item.title)}
+                    aria-label={`Play ${item.title} demo`}
+                    className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-green-500 text-[#071a0d] transition hover:scale-110"
+                  >
                     <Play size={14} fill="currentColor" />
-                  </span>
+                  </button>
                 </div>
                 <h3 className="mt-3 truncate text-sm font-bold text-white">
                   {item.title}
@@ -309,7 +328,7 @@ export default function Videos() {
             {posterItems
               .slice()
               .reverse()
-              .map((item) => (
+              .map((item, index) => (
                 <article
                   key={`${item.title}-anime`}
                   className="group w-[62%] min-w-[62%] snap-start sm:w-[44%] sm:min-w-[44%]"
@@ -321,9 +340,14 @@ export default function Videos() {
                       className="aspect-[3/4] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                    <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-green-500 text-[#071a0d]">
+                    <button
+                      type="button"
+                      onClick={() => playDemo(index + 1, item.title)}
+                      aria-label={`Play ${item.title} demo`}
+                      className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-green-500 text-[#071a0d] transition hover:scale-110"
+                    >
                       <Play size={14} fill="currentColor" />
-                    </span>
+                    </button>
                   </div>
                   <h3 className="mt-3 truncate text-sm font-bold text-white">
                     {item.title}
@@ -386,7 +410,7 @@ export default function Videos() {
             </button>
           </div>
           <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
-            {posterItems.map((item) => (
+            {posterItems.map((item, index) => (
               <article
                 key={`${item.title}-million`}
                 className="group w-[62%] min-w-[62%] snap-start sm:w-[44%] sm:min-w-[44%]"
@@ -398,9 +422,14 @@ export default function Videos() {
                     className="aspect-[3/4] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-black/50 text-white backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => playDemo(index + 1, item.title)}
+                    aria-label={`Play ${item.title} demo`}
+                    className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-green-500 text-[#071a0d] transition hover:scale-110"
+                  >
                     <Play size={14} fill="currentColor" />
-                  </span>
+                  </button>
                 </div>
                 <h3 className="mt-3 truncate text-sm font-bold text-white">
                   {item.title}
@@ -415,6 +444,49 @@ export default function Videos() {
           </div>
         </section>
       </main>
+
+      <AnimatePresence>
+        {demoVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] grid place-items-center bg-black/95 p-4 backdrop-blur-xl"
+            role="dialog"
+            aria-modal="true"
+            aria-label={demoVideo.title}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setDemoVideo(null);
+            }}
+          >
+            <div className="w-full max-w-5xl">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <h2 className="truncate font-display text-sm font-bold text-white sm:text-base">
+                  {demoVideo.title}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setDemoVideo(null)}
+                  aria-label="Close video player"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/5 text-white/75 transition hover:bg-green-500 hover:text-[#071a0d]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <video
+                key={demoVideo.src}
+                src={demoVideo.src}
+                autoPlay
+                controls
+                playsInline
+                className="aspect-video w-full rounded-xl bg-black"
+              >
+                Your browser does not support video playback.
+              </video>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
